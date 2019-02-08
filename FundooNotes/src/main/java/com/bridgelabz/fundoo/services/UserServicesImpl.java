@@ -2,6 +2,8 @@ package com.bridgelabz.fundoo.services;
 
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,9 +14,13 @@ import com.bridgelabz.fundoo.dto.UserDTO;
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.repository.UserRepository;
 import com.bridgelabz.fundoo.util.EmailUtil;
+import com.bridgelabz.fundoo.util.UserToken;
 
 @Service
 public class UserServicesImpl implements UserServices {
+	
+	@Autowired
+	private UserToken userToken;
 	
 	@Autowired
 	private EmailUtil emailSender;
@@ -46,7 +52,7 @@ public class UserServicesImpl implements UserServices {
 		}
 		User user=modelMapper.map(userDTO, User.class);
 	    user.setPassword(passwordEncoder.encode(user.getPassword()));
-	    emailSender.send(user.getEmail(), "mail for Registration", "Howdy");
+	    emailSender.send(user.getEmail(), "mail for Registration", userToken.getBody(user));
 		return userRepository.save(user);
 	}
 	
@@ -64,6 +70,8 @@ public class UserServicesImpl implements UserServices {
 			throw new Exception("Email and Password is not found");
 		}
 	}
+	
+	
 	
 	
 	
