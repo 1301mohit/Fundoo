@@ -27,19 +27,12 @@
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
-<dependency>
+	<dependency>
     <groupId>com.auth0</groupId>
     <artifactId>java-jwt</artifactId>
     <version>3.5.0</version>
-</dependency>
+	</dependency>
 
-		
-		<dependency>
-		    <groupId>org.yaml</groupId>
-		    <artifactId>snakeyaml</artifactId>
-		    <version>1.23</version>
-		</dependency>
-		
 		<dependency>
    			 <groupId>org.modelmapper</groupId>
  		     <artifactId>modelmapper</artifactId>
@@ -47,18 +40,24 @@
 		</dependency>
 		
 	
-		<dependency>
+		<!-- <dependency>
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-core</artifactId>
-		    <version>3.1.0.RELEASE</version>
-		</dependency>
+		 
+		</dependency> -->
 		
 		<dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+     
+        <scope>provided</scope>
+    </dependency>
+		
+		<!-- <dependency>
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
-		    <version>1.18.4</version>
 		    <scope>provided</scope>
-		</dependency>
+		</dependency> -->
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -78,17 +77,17 @@
 		<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>4.0.1.RELEASE</version>
+           
         </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

@@ -1,5 +1,7 @@
 package com.bridgelabz.fundoo.util;
 
+import org.springframework.stereotype.Component;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
@@ -8,15 +10,17 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import com.auth0.jwt.interfaces.Verification;
 import com.bridgelabz.fundoo.model.User;
 
+import lombok.experimental.UtilityClass;
+@UtilityClass
 public class UserToken {
 	
-	private static String TOKEN_SECRET="gh2we43jue";
-	public static String generateToken(long id) throws Exception
+	public static final String TOKEN_SECRET="gh2we43jue";
+	public static String generateToken(Long id) throws Exception
 	{
 		try {
-			Algorithm algorithm= Algorithm.HMAC256(TOKEN_SECRET);
+			Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
 			String token=JWT.create()
-							.withClaim("ID", id)
+							.withClaim("id", id)
 							.sign(algorithm);
 			return token;		
 		}
@@ -26,16 +30,16 @@ public class UserToken {
 		}
 	}
 	
-	public static long tokenVerify(String token)throws Exception	
+	public static Long tokenVerify(String token) throws Exception	
 	{
-		long userid;
+		Long userid;
 		try {
-			Verification verification=JWT.require(Algorithm.HMAC256(UserToken.TOKEN_SECRET));
+			Verification verification=JWT.require(Algorithm.HMAC256(TOKEN_SECRET));
 			JWTVerifier jwtverifier=verification.build();
 			DecodedJWT decodedjwt=jwtverifier.verify(token);
-			Claim claim=decodedjwt.getClaim("ID");
+			Claim claim=decodedjwt.getClaim("id");
 			userid=claim.asLong();	
-			System.out.println(userid);
+			//System.out.println(userid);
 		}
 		catch(Exception exception)
 		{
@@ -45,7 +49,7 @@ public class UserToken {
 			return userid;
 	}
 
-	public String getBody(User user) throws Exception {
-		return ("http://localhost:8080/verify/"+UserToken.generateToken(user.getId()));
-	}
+//	public String getBody(User user) throws Exception {
+//		return ("http://localhost:8080/verify/"+UserToken.generateToken(user.getId()));
+//	}
 }

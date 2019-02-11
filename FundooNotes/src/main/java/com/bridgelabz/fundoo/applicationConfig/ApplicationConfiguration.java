@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.bridgelabz.fundoo.util.EmailUtil;
+import com.bridgelabz.fundoo.util.UserToken;
 /**
  * Purpose: Configuration
  * @author  Mohit Kumar
@@ -19,9 +22,13 @@ public class ApplicationConfiguration {
 		return new ModelMapper();
 	}
 	
-	@Bean
-	public PasswordEncoder getPasswordEncoder()
-	{
-		return new BCryptPasswordEncoder();
-	}
+	
+	  @Bean
+	  public PasswordEncoder getPasswordEncoder()
+	  { 
+		  return new BCryptPasswordEncoder(); 
+	  }
+	 
+	
+
 }

@@ -18,7 +18,7 @@ public class UserDTO {
 //	@GeneratedValue(strategy=GenerationType.AUTO)//
 //	private long id;
 	@NotEmpty(message="Please fill the name")
-	private String name;
+	private String userName;
 	
 	//@UniqueElements
 	@Email(regexp =  "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.(?:[A-Z]{2,}|com|org))+$",message="Not valid")
@@ -34,10 +34,10 @@ public class UserDTO {
 	
 	
 	public String getName() {
-		return name;
+		return userName;
 	}
 	public void setName(String name) {
-		this.name = name;
+		this.userName = name;
 	}
 	public String getEmail() {
 		return email;
