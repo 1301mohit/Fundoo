@@ -55,8 +55,11 @@ public class User {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@NotEmpty(message="please fill the name")
-	private String userName;
+	@NotEmpty(message="please fill the firstname")
+	private String firstName;
+	
+	@NotEmpty(message="please fill the lastname")
+	private String lastName;
 	
 	//@UniqueElements
 	@Column(unique = true)
@@ -93,14 +96,20 @@ public class User {
 		this.id = id;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setUserName(String name) {
-		this.userName = name;
+	public void setFirstName(String name) {
+		this.firstName = name;
 	}
 
+	public void setLastName(String name) {
+		this.lastName = name;
+	}
+	public String getLastName() {
+		return lastName;
+	}
 	public String getEmail() {
 		return email;
 	}
@@ -125,13 +134,16 @@ public class User {
 		this.isVerification = isverification;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+//				+ ", mobileNumber=" + mobileNumber + ", password=" + password + ", isVerification=" + isVerification
+//				+ "]";
+//	}
+
 	/*public static long getSerialversionuid() {
 		return serialVersionUID;
 	}*/
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + userName + ", email=" + email + ", mobileNumber=" + mobileNumber
-				+ ", password=" + password + ", isverification=" + isVerification + "]";
-	}
+	
 }

@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,11 +16,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.bridgelabz.fundoo.services.PasswordServices;
 import com.bridgelabz.fundoo.dto.LoginDTO;
 import com.bridgelabz.fundoo.dto.UserDTO;
 import com.bridgelabz.fundoo.model.User;
@@ -35,60 +37,46 @@ import com.bridgelabz.fundoo.util.UserToken;
 
 @RestController
 //@RequestMapping("/bridgelabz/fundoo")
+@PropertySource("classpath:message.properties")
 public class UserController {
-	@Autowired
-	PasswordServices passwordServices;
 	
-	@Autowired
-	private UserRepository userRepository;
+//	@Autowired
+//	private UserRepository userRepository;
 	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
 	static Logger logger=LoggerFactory.getLogger(UserController.class);
+	
+	@Autowired
+	public Environment environment;
 	
 	@Autowired
 	private UserServices userServices;
 	
 	@PostMapping("/register")
-	public ResponseEntity<String> register(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) throws Exception//UserException
+	public ResponseEntity<String> register(@Valid @RequestBody UserDTO userDTO /*BindingResult bindingResult*/) throws Exception//UserException
 	{
-		
+		System.out.println("helo");
+		  boolean flag = false;
 		  logger.trace("User Registration");
-		  if(bindingResult.hasErrors()) 
-		  {
-			  logger.error("Error in Binding The User Details"); 
-			  throw new Exception("Data Not Matching"); 
-		  }
-		  try 
-		  { 
-			 userServices.register(userDTO);
-		  } 
-		  catch (Exception e) 
-		  { 
-			  e.printStackTrace();
-		  }
-		 
-		return new ResponseEntity<String>("Registration Successfull", HttpStatus.OK);
-		//	System.out.println("Registered");
+//		  if(bindingResult.hasErrors()) 
+//		  {
+//			  logger.error("Error in Binding The User Details"); 
+//			  throw new Exception("Data Not Matching"); 
+//		  }
+		  
+		userServices.register(userDTO);
+		return new ResponseEntity<String>(environment.getProperty("register"), HttpStatus.OK);
 	}
-	
-//	@GetMapping("/forgetPassword")
-//	public ResponseEntity<String> forgetPassword()
-//	{
-//		
-//		
-//	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO) throws Exception
 	{
 		logger.trace("Login");
 		boolean flag = false;
-		try {
-			flag = userServices.login(loginDTO);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		flag = userServices.login(loginDTO);
+			
 		if(flag)
 			return new ResponseEntity<String>("Login Successfull", HttpStatus.OK);
 		else
@@ -108,31 +96,39 @@ public class UserController {
 	{
 		System.out.println("forgetPassword");
 		logger.info("Password Recovery");
-		User user = passwordServices.forgotPassword(email);
-		EmailUtil.send(email, "Password Reset", this.getBody(user, "Reset Password"));
+		userServices.forgotPassword(email);
 		return new ResponseEntity<String>("Reset-Mail Send To Your Eamil Address", HttpStatus.OK);
 	}
 	
-	@GetMapping("/resetPassword/{token}")
-	public ResponseEntity<?> resetPassword(@PathVariable("token") String token) throws Exception{
-		logger.info("password reset");
-		User user = passwordServices.resetPassword(token);
-		EmailUtil.send(user.getEmail(), "Change Password", this.getBody(user, "reset page"));
-		return new ResponseEntity<String>("Redirect to new password set pqage",HttpStatus.OK);
+
+	
+	@PutMapping("{token}/resetPassword")
+	public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestParam String password) throws Exception
+	{
+		userServices.resetPassword(token, password);
+		return new ResponseEntity<String>("Password reset",HttpStatus.OK);
 	}
 	
-	@PostMapping("/resetPage/{token}")
-	public ResponseEntity<?> resetPage(@PathVariable("token") String token, @RequestBody LoginDTO loginUser) throws Exception{
-		logger.info("Password reset page");
-		long userId = UserToken.tokenVerify(token);
-		User user = userRepository.findById(userId).get();
-		user.setPassword(passwordEncoder.encode(loginUser.getPassword()));
-		userRepository.save(user);
-		return new ResponseEntity<String>("Password Set Successfully",HttpStatus.OK);
-	}
+//	@GetMapping("/resetPassword/{token}")
+//	public ResponseEntity<?> resetPassword(@PathVariable("token") String token,) throws Exception{
+//		logger.info("password reset");
+//		User user = userServices.resetPassword(token);
+//		EmailUtil.send(user.getEmail(), "Change Password", .getBody(user, "reset page"));
+//		return new ResponseEntity<String>("Redirect to new password set pqage",HttpStatus.OK);
+//	}
 	
-	private String getBody(User user, String link) throws Exception {
+//	@PostMapping("/resetPage/{token}")
+//	public ResponseEntity<?> resetPage(@PathVariable("token") String token, @RequestBody LoginDTO loginUser) throws Exception{
+//		logger.info("Password reset page");
+//		long userId = UserToken.tokenVerify(token);
+//		User user = userRepository.findById(userId).get();
+//		user.setPassword(passwordEncoder.encode(loginUser.getPassword()));
+//		userRepository.save(user);
+//		return new ResponseEntity<String>("Password Set Successfully",HttpStatus.OK);
+//	}
+	
+	/*private String getBody(User user, String link) {
 		return "192.168.0.84:8080/"+link+UserToken.generateToken(user.getId());
-	}
+	}*/
 	
 }

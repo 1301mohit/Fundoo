@@ -1,4 +1,4 @@
-package com.bridgelabz.fundoo.applicationConfig;
+package com.bridgelabz.fundoo.applicationconfig;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +23,10 @@ public class ApplicationConfiguration {
 	}
 	
 	
-	  @Bean
-	  public PasswordEncoder getPasswordEncoder()
-	  { 
-		  return new BCryptPasswordEncoder(); 
-	  }
+	@Bean
+	public PasswordEncoder getPasswordEncoder()
+	{ 
+		return new BCryptPasswordEncoder(); 
+	}
 	 
-	
-
 }

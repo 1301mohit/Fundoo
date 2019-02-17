@@ -13,12 +13,12 @@ import javax.validation.constraints.NotEmpty;
 //@Setter
 //@ToString
 public class UserDTO {
-//	
-//	@Id
-//	@GeneratedValue(strategy=GenerationType.AUTO)//
-//	private long id;
-	@NotEmpty(message="Please fill the name")
-	private String userName;
+
+	@NotEmpty(message="Please fill the firstname")
+	private String firstName;
+	
+	@NotEmpty(message="Please fill the lastname")
+	private String lastName;
 	
 	//@UniqueElements
 	@Email(regexp =  "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.(?:[A-Z]{2,}|com|org))+$",message="Not valid")
@@ -33,11 +33,17 @@ public class UserDTO {
 	private String mobileNumber;
 	
 	
-	public String getName() {
-		return userName;
+	public String getFirstName() {
+		return firstName;
 	}
-	public void setName(String name) {
-		this.userName = name;
+	public void setFirstName(String name) {
+		this.firstName = name;
+	}
+	public void setLastName(String name) {
+		this.lastName = name;
+	}
+	public String getLastName() {
+		return lastName;
 	}
 	public String getEmail() {
 		return email;

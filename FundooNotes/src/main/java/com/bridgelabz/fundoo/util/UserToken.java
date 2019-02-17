@@ -11,7 +11,7 @@ import com.auth0.jwt.interfaces.Verification;
 import com.bridgelabz.fundoo.model.User;
 
 import lombok.experimental.UtilityClass;
-@UtilityClass
+//@UtilityClass
 public class UserToken {
 	
 	public static final String TOKEN_SECRET="gh2we43jue";
