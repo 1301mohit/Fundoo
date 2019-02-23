@@ -1,5 +1,7 @@
 package com.bridgelabz.fundoo.model;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,43 +18,8 @@ import javax.validation.constraints.Pattern;
 @Entity
 @Table(name="User_Details")
 public class User {
-//	@Id
-//	@GeneratedValue(strategy=GenerationType.AUTO)//
-//	private long id;
-//	private String name;
-//	private String email;
-//	private String password;
-//	
-//	public long getId() {
-//		return id;
-//	}
-//	public void setId(long id) {
-//		this.id = id;
-//	}
-//	public String getName() {
-//		return name;
-//	}
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//	public String getEmail() {
-//		return email;
-//	}
-//	public void setEmail(String email) {
-//		this.email = email;
-//	}
-//	public String getPassword() {
-//		return password;
-//	}
-//	public void setPassword(String password) {
-//		this.password = password;
-//	}
-	
-	
-	
-
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@NotEmpty(message="please fill the firstname")
@@ -62,7 +29,7 @@ public class User {
 	private String lastName;
 	
 	//@UniqueElements
-	@Column(unique = true)
+	@Column(unique = true, nullable=false)
 	@NotEmpty(message="please fill the email")
 	private String email;
 	
@@ -72,6 +39,10 @@ public class User {
 	
 	@NotEmpty(message="please fill the password")
 	private String password;
+	
+	private LocalDate registeredDate;
+	
+	private LocalDate accountUpdateDate;
 	
 	private boolean isVerification;
 	
@@ -134,16 +105,36 @@ public class User {
 		this.isVerification = isverification;
 	}
 
+	public LocalDate getRegisteredDate() {
+		return registeredDate;
+	}
+
+	public void setRegisteredDate(LocalDate registeredDate) {
+		this.registeredDate = registeredDate;
+	}
+
+	public LocalDate getAccountUpdateDate() {
+		return accountUpdateDate;
+	}
+
+	public void setAccountUpdateDate(LocalDate accountUpdateDate) {
+		this.accountUpdateDate = accountUpdateDate;
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
 //	@Override
 //	public String toString() {
 //		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
 //				+ ", mobileNumber=" + mobileNumber + ", password=" + password + ", isVerification=" + isVerification
 //				+ "]";
 //	}
-
-	/*public static long getSerialversionuid() {
-		return serialVersionUID;
-	}*/
-
-	
-}

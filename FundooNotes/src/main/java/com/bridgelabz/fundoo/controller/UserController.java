@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ import com.bridgelabz.fundoo.dto.LoginDTO;
 import com.bridgelabz.fundoo.dto.UserDTO;
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.repository.UserRepository;
-
+import com.bridgelabz.fundoo.response.Response;
 //import com.bridgelabz.fundoo.exception.UserException;
 //import com.bridgelabz.fundoo.exception.UserException;
 //import com.bridgelabz.fundoo.response.Response;
@@ -35,17 +36,14 @@ import com.bridgelabz.fundoo.services.UserServices;
 import com.bridgelabz.fundoo.util.EmailUtil;
 import com.bridgelabz.fundoo.util.UserToken;
 
-@RestController
+//@CrossOrigin(origins="http://localhost:4200")
 //@RequestMapping("/bridgelabz/fundoo")
+@RestController
 @PropertySource("classpath:message.properties")
+@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = {"jwtToken"})
 public class UserController {
 	
-//	@Autowired
-//	private UserRepository userRepository;
-	
-//	@Autowired
-//	private PasswordEncoder passwordEncoder;
-	static Logger logger=LoggerFactory.getLogger(UserController.class);
+	static final Logger logger=LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired
 	public Environment environment;
@@ -54,34 +52,22 @@ public class UserController {
 	private UserServices userServices;
 	
 	@PostMapping("/register")
-	public ResponseEntity<String> register(@Valid @RequestBody UserDTO userDTO /*BindingResult bindingResult*/) throws Exception//UserException
+	public ResponseEntity<Response> register(@Valid @RequestBody UserDTO userDTO/*BindingResult bindingResult*/) throws Exception//UserException
 	{
-		System.out.println("helo");
-		  boolean flag = false;
-		  logger.trace("User Registration");
-//		  if(bindingResult.hasErrors()) 
-//		  {
-//			  logger.error("Error in Binding The User Details"); 
-//			  throw new Exception("Data Not Matching"); 
-//		  }
-		  
-		userServices.register(userDTO);
-		return new ResponseEntity<String>(environment.getProperty("register"), HttpStatus.OK);
+		logger.info("userDTO:"+userDTO);
+		logger.trace("User Registration");
+		Response response = userServices.register(userDTO);
+		return new ResponseEntity<Response>(response , HttpStatus.OK);
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO) throws Exception
+	public ResponseEntity<Response> login(@Valid @RequestBody LoginDTO loginDTO) throws Exception
 	{
+		logger.info("loginDTO:"+loginDTO);
 		logger.trace("Login");
 		boolean flag = false;
-		
-		flag = userServices.login(loginDTO);
-			
-		if(flag)
-			return new ResponseEntity<String>("Login Successfull", HttpStatus.OK);
-		else
-			return new ResponseEntity<String>("Login Unsuccessfull", HttpStatus.NOT_FOUND);
-		
+		Response response = userServices.login(loginDTO);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	
 	@GetMapping("/user/{token}")
@@ -91,44 +77,67 @@ public class UserController {
 		return result;
 	}
 
-	@PostMapping("/forgotpassword")
-	public ResponseEntity<?> forgetPassword(@RequestParam String email) throws Exception
+	@PostMapping("/forgetPassword")
+	public ResponseEntity<Response> forgetPassword(@RequestParam String email) throws Exception
 	{
-		System.out.println("forgetPassword");
-		logger.info("Password Recovery");
-		userServices.forgotPassword(email);
-		return new ResponseEntity<String>("Reset-Mail Send To Your Eamil Address", HttpStatus.OK);
+		logger.info("email:"+email);
+		logger.trace("Forget Password");
+		Response response = userServices.forgotPassword(email);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+//		return new ResponseEntity<String>("Change your password", HttpStatus.OK);
 	}
 	
-
-	
-	@PutMapping("{token}/resetPassword")
-	public ResponseEntity<?> resetPassword(@PathVariable String token, @RequestParam String password) throws Exception
+	@PutMapping("/user/{token}")
+	public ResponseEntity<Response> resetPassword(@PathVariable String token, @RequestParam String password) throws Exception
 	{
-		userServices.resetPassword(token, password);
-		return new ResponseEntity<String>("Password reset",HttpStatus.OK);
+		logger.info("token:"+token);
+		logger.info("password:"+password);
+		Response response = userServices.resetPassword(token, password);
+		return new ResponseEntity<Response>(response ,HttpStatus.OK);
+//		return new ResponseEntity<String>("Password reset",HttpStatus.OK);
 	}
-	
-//	@GetMapping("/resetPassword/{token}")
-//	public ResponseEntity<?> resetPassword(@PathVariable("token") String token,) throws Exception{
-//		logger.info("password reset");
-//		User user = userServices.resetPassword(token);
-//		EmailUtil.send(user.getEmail(), "Change Password", .getBody(user, "reset page"));
-//		return new ResponseEntity<String>("Redirect to new password set pqage",HttpStatus.OK);
-//	}
-	
-//	@PostMapping("/resetPage/{token}")
-//	public ResponseEntity<?> resetPage(@PathVariable("token") String token, @RequestBody LoginDTO loginUser) throws Exception{
-//		logger.info("Password reset page");
-//		long userId = UserToken.tokenVerify(token);
-//		User user = userRepository.findById(userId).get();
-//		user.setPassword(passwordEncoder.encode(loginUser.getPassword()));
-//		userRepository.save(user);
-//		return new ResponseEntity<String>("Password Set Successfully",HttpStatus.OK);
-//	}
-	
-	/*private String getBody(User user, String link) {
-		return "192.168.0.84:8080/"+link+UserToken.generateToken(user.getId());
-	}*/
-	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//if(bindingResult.hasErrors()) 
+//{
+//	logger.error("Error in Binding The User Details"); 
+//	throw new Exception("Data Not Matching"); 
+//}
+
+//@GetMapping("/resetPassword/{token}")
+//public ResponseEntity<?> resetPassword(@PathVariable("token") String token,) throws Exception{
+//	logger.info("password reset");
+//	User user = userServices.resetPassword(token);
+//	EmailUtil.send(user.getEmail(), "Change Password", .getBody(user, "reset page"));
+//	return new ResponseEntity<String>("Redirect to new password set pqage",HttpStatus.OK);
+//}
+
+//@PostMapping("/resetPage/{token}")
+//public ResponseEntity<?> resetPage(@PathVariable("token") String token, @RequestBody LoginDTO loginUser) throws Exception{
+//	logger.info("Password reset page");
+//	long userId = UserToken.tokenVerify(token);
+//	User user = userRepository.findById(userId).get();
+//	user.setPassword(passwordEncoder.encode(loginUser.getPassword()));
+//	userRepository.save(user);
+//	return new ResponseEntity<String>("Password Set Successfully",HttpStatus.OK);
+//}
+
+/*private String getBody(User user, String link) {
+	return "192.168.0.84:8080/"+link+UserToken.generateToken(user.getId());
+}*/

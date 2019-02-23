@@ -10,11 +10,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import com.bridgelabz.fundoo.dto.LoginDTO;
 import com.bridgelabz.fundoo.dto.UserDTO;
 import com.bridgelabz.fundoo.model.User;
 import com.bridgelabz.fundoo.repository.UserRepository;
+import com.bridgelabz.fundoo.response.Response;
 import com.bridgelabz.fundoo.util.EmailUtil;
 import com.bridgelabz.fundoo.util.UserToken;
 import com.bridgelabz.fundoo.util.Utility;
@@ -29,15 +31,15 @@ public class UserServicesImpl implements UserServices {
 	@Autowired
 	private UserRepository userRepository;
 	
-	
-	
 	@Autowired 
 	private PasswordEncoder passwordEncoder;
 	 
-	 
-	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private Response response;
+	
 	/**
 	 * 
 	 * @param user
@@ -45,30 +47,35 @@ public class UserServicesImpl implements UserServices {
 	 * @throws Exception
 	 */
 	@Override
-	public void register(UserDTO userDTO) throws Exception {
-		
+	public Response register(UserDTO userDTO) throws Exception 
+	{	
 		Optional<User> useravailable = userRepository.findByEmail(userDTO.getEmail());
 		if(useravailable.isPresent())
 		{
 			throw new Exception("Dublicate user found");
-			//throw new UserException(100,"Duplicate user found");
 		}
-		//System.out.println(environment.getProperty("a"));
 		User user=modelMapper.map(userDTO, User.class);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 	    user = userRepository.save(user);
-	    //System.out.println(user.getUserName());
 	    EmailUtil.send(user.getEmail(), "mail for Registration", getUrl(user.getId()));
+	    response.setStatusCode(100);
+	    response.setStatusMessage(environment.getProperty("1"));
+	    return response;
 	}
 	
 	@Override
-	public boolean login(LoginDTO loginuser) throws Exception {
-		Optional<User> useravailable = userRepository.findByEmail(loginuser.getEmail());
-		System.out.println("database password"+useravailable.get().getPassword());
+	public Response login(LoginDTO loginuser) throws Exception 
+	{
+		Optional<User> userAvailable = userRepository.findByEmail(loginuser.getEmail());
+		System.out.println("database password"+userAvailable.get().getPassword());
 		System.out.println("login user password"+passwordEncoder.encode(loginuser.getPassword()));
-		if(useravailable.isPresent() && passwordEncoder.matches(loginuser.getPassword(),useravailable.get().getPassword()) && useravailable.get().isIsverification()) 
+		if(userAvailable.isPresent() && passwordEncoder.matches(loginuser.getPassword(),userAvailable.get().getPassword()) && userAvailable.get().isIsverification()) 
 		{ 
-			return true; 
+			String generateToken = UserToken.generateToken(userAvailable.get().getId());
+			response.setStatusCode(200);
+			response.setStatusMessage(environment.getProperty("2"));
+			response.setToken(generateToken);
+			return response; 
 		} 
 		else 
 		{ 
@@ -77,7 +84,8 @@ public class UserServicesImpl implements UserServices {
 	}
 
 	@Override
-	public String validateEmailId(String token) throws Exception {
+	public String validateEmailId(String token) throws Exception 
+	{
 		Long id = UserToken.tokenVerify(token);
 		User user = userRepository.findById(id).orElseThrow(() -> new Exception("User not found")); 
 		user.setIsverification(true);
@@ -86,30 +94,55 @@ public class UserServicesImpl implements UserServices {
 	}
 	
 	
-	public String getUrl(Long id) throws Exception{
+	public String getUrl(Long id) throws Exception
+	{
 		return "192.168.0.84:8080/user/"+UserToken.generateToken(id);
 	}
 	
 	@Override
-	public void forgotPassword(String email) throws Exception {
+	public Response forgotPassword(String email) throws Exception 
+	{
 		Optional<User> userAvailable = userRepository.findByEmail(email);
-		if(userAvailable.isPresent()) {
+		if(userAvailable.isPresent()) 
+		{
 			User user = userAvailable.get();
-			EmailUtil.send(email, "Password Reset", Utility.getBody(user, "Reset Password"));
+			EmailUtil.send(email, "Password Reset", Utility.getBody(user, "user"));
+			response.setStatusCode(300);
+			response.setStatusMessage(environment.getProperty("3"));
+			return response;
 		}
-		else {
+		else 
+		{
 			throw new Exception("Email not found");
 		}
 	}
 	
 	@Override
-	public void resetPassword(String token, String password) throws Exception
+	public Response resetPassword(String token, String password) throws Exception
 	{
 			long userId = UserToken.tokenVerify(token);
+			System.out.println(userId);
 			User user = userRepository.findById(userId).get();
+			System.out.println(user.getPassword());
 			user.setPassword(passwordEncoder.encode(password));
+			System.out.println(user.getPassword());
 			userRepository.save(user);
+			response.setStatusCode(400);
+			response.setStatusMessage(environment.getProperty("4"));
+			return response;
 	}
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //	@Override
 //	public User resetPassword(String token) throws Exception {
@@ -120,4 +153,4 @@ public class UserServicesImpl implements UserServices {
 //	public String getBody(User user, String link) throws Exception {
 //		return "192.168.0.84:8080/"+link+UserToken.generateToken(user.getId());
 //	}
-}
+

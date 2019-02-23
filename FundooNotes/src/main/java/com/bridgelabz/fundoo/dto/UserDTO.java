@@ -22,7 +22,7 @@ public class UserDTO {
 	
 	//@UniqueElements
 	@Email(regexp =  "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.(?:[A-Z]{2,}|com|org))+$",message="Not valid")
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	@NotEmpty(message="Please fill the email")
 	private String email;
 	

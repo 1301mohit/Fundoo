@@ -38,8 +38,9 @@ public class EmailUtil {
 	
 	public static void send(String toEmail, String subject, String body) throws MessagingException {
 		
-		final String fromEmail = "fundoodata413@gmail.com";
-		final String password = "fundoo@123!";
+		 final String fromEmail = "fundooapp1@gmail.com";//"fundoodata413@gmail.com";
+		 final String password = "fundoo1@pp";//"fundoo@123!";
+		 
 		
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -67,10 +68,12 @@ public class EmailUtil {
 			msg.setSentDate(new Date());
 			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
 			System.out.println("Message is ready");
+			System.out.println(msg);
 			Transport.send(msg);
 			System.out.println("Email sent Successfully!!");
 		}
 		catch(Exception e) {
+			System.out.println(e);
 			e.printStackTrace();
 		}
 				
